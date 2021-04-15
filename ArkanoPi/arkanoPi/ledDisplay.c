@@ -57,15 +57,17 @@ void InicializaLedDisplay (TipoLedDisplay *led_display) {
 
 void ApagaFilas (TipoLedDisplay *led_display){
 
-	digitalWrite(led_display->filas[0], !led_display->pantalla.matriz[led_display->p_columna][0]);
-	digitalWrite(led_display->filas[1], !led_display->pantalla.matriz[led_display->p_columna][1]);
-	digitalWrite(led_display->filas[2], !led_display->pantalla.matriz[led_display->p_columna][2]);
-	digitalWrite(led_display->filas[3], !led_display->pantalla.matriz[led_display->p_columna][3]);
-	digitalWrite(led_display->filas[4], !led_display->pantalla.matriz[led_display->p_columna][4]);
-	digitalWrite(led_display->filas[5], !led_display->pantalla.matriz[led_display->p_columna][5]);
-	digitalWrite(led_display->filas[6], !led_display->pantalla.matriz[led_display->p_columna][6]);
+digitalWrite(led_display->filas[0], 1);
+digitalWrite(led_display->filas[1], 1);
+digitalWrite(led_display->filas[2], 1);
+digitalWrite(led_display->filas[3], 1);
+digitalWrite(led_display->filas[4], 1);
+digitalWrite(led_display->filas[5], 1);
+digitalWrite(led_display->filas[6], 1);
 
 }
+
+
 
 void ExcitaColumnas(int columna) {
 
@@ -134,12 +136,22 @@ void ExcitaColumnas(int columna) {
 
 		}
 
-		tmr_startms((tmr_t*)(led_display.tmr_refresco_display),TIMEOUT_COLUMNA_DISPLAY);
 
 }
 
 void ActualizaLedDisplay (TipoLedDisplay *led_display) {
 
+	ApagaFilas(led_display);
+
+	ExcitaColumnas(led_display->p_columna);
+
+	for(int i=0; i <7; i++){
+			if(led_display->pantalla.matriz[led_display->p_columna][i] == 1){
+				digitalWrite(led_display->filas[i], 0);
+			}
+	}
+
+	tmr_startms((tmr_t*)(led_display->tmr_refresco_display),TIMEOUT_COLUMNA_DISPLAY);
 
 
 }
@@ -150,12 +162,12 @@ void ActualizaLedDisplay (TipoLedDisplay *led_display) {
 
 int CompruebaTimeoutColumnaDisplay (fsm_t* this) {
 	int result = 0;
-	//TipoLedDisplay *p_ledDisplay;
-	//p_ledDisplay = (TipoLedDisplay*)(this->user_data);
+	TipoLedDisplay *p_ledDisplay;
+	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	result=(flags & FLAG_TIMEOUT_COLUMNA_DISPLAY );
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(MATRIX_KEY);
+	result=(p_ledDisplay->flags & FLAG_TIMEOUT_COLUMNA_DISPLAY );
+	piUnlock(MATRIX_KEY);
 
 	return result;
 }
@@ -168,12 +180,16 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 	TipoLedDisplay *p_ledDisplay;
 	p_ledDisplay = (TipoLedDisplay*)(this->user_data);
 
+	piLock(MATRIX_KEY);
+	p_ledDisplay->flags &=(~FLAG_TIMEOUT_COLUMNA_DISPLAY);
+	piUnlock(MATRIX_KEY);
+
 	p_ledDisplay->p_columna++;
-	if(p_ledDisplay->p_columna>9){
+	if(p_ledDisplay->p_columna>7){
 		p_ledDisplay->p_columna=0;
 	}
 
-	ExcitaColumnas(p_ledDisplay->p_columna);
+	ActualizaLedDisplay(p_ledDisplay);
 }
 
 //------------------------------------------------------
@@ -181,8 +197,8 @@ void ActualizaExcitacionDisplay (fsm_t* this) {
 //------------------------------------------------------
 
 void timer_refresco_display_isr (union sigval value) {
-	piLock (SYSTEM_FLAGS_KEY);
-	flags |= FLAG_TIMEOUT_COLUMNA_DISPLAY;
-	piUnlock (SYSTEM_FLAGS_KEY);
-}
 
+	piLock (MATRIX_KEY);
+	led_display.flags |= FLAG_TIMEOUT_COLUMNA_DISPLAY;
+	piUnlock (MATRIX_KEY);
+}

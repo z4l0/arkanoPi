@@ -108,12 +108,12 @@ void ActualizaExcitacionTecladoGPIO (int columna) {
 
 int CompruebaTimeoutColumna (fsm_t* this) {
 	int result = 0;
-	//TipoTeclado *p_teclado;
-	//p_teclado = (TipoTeclado*)(this->user_data);
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	result=(flags & FLAG_TIMEOUT_COLUMNA_TECLADO );
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
+	result=(p_teclado->flags & FLAG_TIMEOUT_COLUMNA_TECLADO );
+	piUnlock(KEYBOARD_KEY);
 
 	return result;
 
@@ -122,12 +122,12 @@ int CompruebaTimeoutColumna (fsm_t* this) {
 
 int CompruebaTeclaPulsada (fsm_t* this) {
 	int result = 0;
-	//TipoTeclado *p_teclado;
-	//p_teclado = (TipoTeclado*)(this->user_data);
+	TipoTeclado *p_teclado;
+	p_teclado = (TipoTeclado*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	result=(flags & FLAG_TECLA_PULSADA);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
+	result=(p_teclado->flags & FLAG_TECLA_PULSADA);
+	piUnlock(KEYBOARD_KEY);
 
 	return result;
 }
@@ -153,9 +153,9 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 	TipoTeclado *p_teclado;
 	p_teclado = (TipoTeclado*)(this->user_data);
 
-	piLock(SYSTEM_FLAGS_KEY);
-	flags &= (~FLAG_TECLA_PULSADA);
-	piUnlock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
+	p_teclado->flags &= (~FLAG_TECLA_PULSADA);
+
 
 	switch(p_teclado->teclaPulsada.col){
 	case COLUMNA_1:
@@ -168,6 +168,10 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 		else if(p_teclado->teclaPulsada.row==FILA_2){
 			//printf("\nKeypress 4!!!\n");
 			//fflush(stdout);
+
+			piLock (SYSTEM_FLAGS_KEY);
+			flags |= FLAG_MOV_IZQUIERDA;
+			piUnlock (SYSTEM_FLAGS_KEY);
 
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
@@ -192,17 +196,8 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			p_teclado->teclaPulsada.col = -1;
 				}
 		else if(p_teclado->teclaPulsada.row==FILA_2){
-			piLock (SYSTEM_FLAGS_KEY);
-			flags |= FLAG_MOV_IZQUIERDA;
-			piUnlock (SYSTEM_FLAGS_KEY);
 
-
-
-
-
-
-
-						p_teclado->teclaPulsada.row= -1;
+			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
 		else if(p_teclado->teclaPulsada.row==FILA_3){
@@ -271,6 +266,8 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 
 	}
 
+	piUnlock(KEYBOARD_KEY);
+
 }
 
 
@@ -284,12 +281,12 @@ void teclado_fila_1_isr (void) {
 		teclado.debounceTime[0]= millis () + DEBOUNCE_TIME;
 		return;
 	}
-	piLock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
 	teclado.teclaPulsada.row=FILA_1;
 	teclado.teclaPulsada.col=teclado.columna_actual;
 
-	flags |= FLAG_TECLA_PULSADA;
-	piUnlock(SYSTEM_FLAGS_KEY);
+	teclado.flags |= FLAG_TECLA_PULSADA;
+	piUnlock(KEYBOARD_KEY);
 
 	teclado.debounceTime[0]=millis()+ DEBOUNCE_TIME;
 }
@@ -300,12 +297,12 @@ void teclado_fila_2_isr (void) {
 			teclado.debounceTime[1]=millis () + DEBOUNCE_TIME;
 			return;
 	}
-	piLock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
 	teclado.teclaPulsada.row=FILA_2;
 	teclado.teclaPulsada.col=teclado.columna_actual;
 
-	flags |= FLAG_TECLA_PULSADA;
-	piUnlock(SYSTEM_FLAGS_KEY);
+	teclado.flags |= FLAG_TECLA_PULSADA;
+	piUnlock(KEYBOARD_KEY);
 
 	teclado.debounceTime[1]=millis()+ DEBOUNCE_TIME;
 }
@@ -316,12 +313,12 @@ void teclado_fila_3_isr (void) {
 				teclado.debounceTime[2]=millis () + DEBOUNCE_TIME;
 				return;
 	}
-	piLock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
 	teclado.teclaPulsada.row=FILA_3;
 	teclado.teclaPulsada.col=teclado.columna_actual;
 
-	flags |= FLAG_TECLA_PULSADA;
-	piUnlock(SYSTEM_FLAGS_KEY);
+	teclado.flags |= FLAG_TECLA_PULSADA;
+	piUnlock(KEYBOARD_KEY);
 
 	teclado.debounceTime[2]=millis()+ DEBOUNCE_TIME;
 }
@@ -332,23 +329,20 @@ void teclado_fila_4_isr (void) {
 					teclado.debounceTime[3]=millis () + DEBOUNCE_TIME;
 					return;
 	}
-	piLock(SYSTEM_FLAGS_KEY);
+	piLock(KEYBOARD_KEY);
 	teclado.teclaPulsada.row=FILA_4;
 	teclado.teclaPulsada.col=teclado.columna_actual;
 
-	flags |= FLAG_TECLA_PULSADA;
-	piUnlock(SYSTEM_FLAGS_KEY);
+	teclado.flags |= FLAG_TECLA_PULSADA;
+	piUnlock(KEYBOARD_KEY);
 
 	teclado.debounceTime[3]=millis()+ DEBOUNCE_TIME;
 }
 
 void timer_duracion_columna_isr (union sigval value) {
 
-	piLock (SYSTEM_FLAGS_KEY);
-	flags |= FLAG_TIMEOUT_COLUMNA_TECLADO ;
-	piUnlock (SYSTEM_FLAGS_KEY);
+	piLock (KEYBOARD_KEY);
+	teclado.flags |= FLAG_TIMEOUT_COLUMNA_TECLADO ;
+	piUnlock (KEYBOARD_KEY);
 
 }
-
-
-
