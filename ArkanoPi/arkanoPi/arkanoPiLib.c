@@ -1,6 +1,11 @@
 #include "arkanoPiLib.h"
+//variable para aumentar la velociad de desplazamiento de la pelota (ha dejado de ser una cte.)
+int TIMEOUT_ACTUALIZA_JUEGO=1200;
 
+//varible que se encarga del incremento de nivel una vez superada la pantalla
+int level=3;
 
+//pantallas para los diferentes niveles
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{1,1,1,1,1,1,1,1},
 	{1,1,1,1,1,1,1,1},
@@ -9,6 +14,121 @@ int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
+};
+
+int ladrillos_level2[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
+		{2,0,0,2,2,0,0,2},
+		{2,0,0,2,2,0,0,2},
+		{0,2,2,2,2,2,2,0},
+		{0,2,2,2,2,2,2,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+};
+
+int ladrillos_level3[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
+		{3,0,3,3,3,3,0,3},
+		{0,3,0,3,3,0,3,0},
+		{0,3,3,3,3,3,3,0},
+		{0,3,3,3,3,3,3,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+};
+
+tipo_pantalla pantalla_flecha1 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+	}
+};
+tipo_pantalla pantalla_flecha2 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+	}
+};
+
+tipo_pantalla pantalla_flecha3 = {
+	.matriz = {
+
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv1 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv2 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,1,0,0,1,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv3 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,1,1,1,1,1,0},
+		{0,0,0,0,0,1,0,0},
+		{0,0,0,0,1,1,0,0},
+		{0,0,1,0,0,0,1,0},
+		{0,0,0,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_pregunta = {
+	.matriz = {
+
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,0,0,1,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+
+	}
 };
 
 //------------------------------------------------------
@@ -63,11 +183,23 @@ void ReseteaPantalla (tipo_pantalla *p_pantalla) {
 void InicializaLadrillos(tipo_pantalla *p_ladrillos) {
 	int i=0, j=0;
 
-	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
-		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
-			p_ladrillos->matriz[i][j] = ladrillos_basico[i][j];
-		}
-	}
+		switch(level){
+		case 1:
+		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+			for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+				p_ladrillos->matriz[i][j] = ladrillos_basico[i][j];}}
+		break;
+		case 2:
+			for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+					for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+						p_ladrillos->matriz[i][j] = ladrillos_level2[i][j];}}
+			break;
+		case 3:
+				for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+						for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+							p_ladrillos->matriz[i][j] = ladrillos_level3[i][j];}}
+				break;
+}
 }
 
 void InicializaPelota(tipo_pelota *p_pelota) {
@@ -186,6 +318,7 @@ void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi) {
 
 void InicializaArkanoPi(tipo_arkanoPi *p_arkanoPi) {
 	ResetArkanoPi(p_arkanoPi);
+
 	ActualizaPantalla(p_arkanoPi);
 }
 
@@ -485,6 +618,24 @@ void ActualizarJuego (fsm_t* this) {
 	flags &=(~FLAG_TIMER_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
+
+	switch(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla)){
+		case 12:
+			/*el TIMEOUT_ACTUALIZA JUEGO se inicia a 1200 ms, y a medida que se van eliminando ladrillos se llega a un
+			valor mínimo de 450 ms.*/
+
+			TIMEOUT_ACTUALIZA_JUEGO = TIMEOUT_ACTUALIZA_JUEGO - 250;
+			break;
+		case 7:
+			TIMEOUT_ACTUALIZA_JUEGO = TIMEOUT_ACTUALIZA_JUEGO - 250;
+			break;
+		case 4:
+			TIMEOUT_ACTUALIZA_JUEGO = TIMEOUT_ACTUALIZA_JUEGO - 350;
+			break;
+		default:
+			break;
+		}
+
 	if(CompruebaReboteParedesVerticales(*p_arkanoPi)){
 		p_arkanoPi->pelota.trayectoria.xv= -(p_arkanoPi->pelota.trayectoria.xv);
 	}
@@ -520,7 +671,16 @@ void ActualizarJuego (fsm_t* this) {
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_FIN_JUEGO;
 			piUnlock (SYSTEM_FLAGS_KEY);
-			return;
+			level++;
+			if(level>3){
+				FinalJuego(this);
+			}
+
+			piLock(MATRIX_KEY);
+			ResetArkanoPi(p_arkanoPi);
+			piUnlock(MATRIX_KEY);
+
+
 		}else if(CompruebaReboteTecho (*p_arkanoPi)){
 			p_arkanoPi->pelota.trayectoria.xv = -(p_arkanoPi->pelota.trayectoria.xv);
 			p_arkanoPi->pelota.trayectoria.yv = -(p_arkanoPi->pelota.trayectoria.yv);
