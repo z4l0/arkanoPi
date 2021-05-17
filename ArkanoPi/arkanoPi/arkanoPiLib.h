@@ -76,17 +76,27 @@ int CompruebaReboteParedesVerticales (tipo_arkanoPi arkanoPi);
 int CompruebaReboteTecho (tipo_arkanoPi arkanoPi);
 int CompruebaRebotePala (tipo_arkanoPi arkanoPi);
 int CompruebaFallo (tipo_arkanoPi arkanoPi);
+int CompruebaPausa (fsm_t* this);
+int CompruebaFinalPausa (fsm_t* this);
 int CalculaLadrillosRestantes(tipo_pantalla *p_ladrillos);
 
 //------------------------------------------------------
 // PROCEDIMIENTOS PARA LA VISUALIZACION DEL JUEGO
 //------------------------------------------------------
+void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi);
 void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pantalla_inicial);
+void PintaMensajeFinalPantalla (tipo_pantalla *p_pantalla);
+void PintaPregunta (tipo_pantalla *p_pantalla) ;
+void PintaFlechaPantalla (tipo_pantalla *p_pantalla);
+void PintaNivelPantalla (tipo_pantalla *p_pantalla) ;
 void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla);
 void PintaLadrillos(tipo_pantalla *p_ladrillos, tipo_pantalla *p_pantalla);
 void PintaPala(tipo_pala *p_pala, tipo_pantalla *p_pantalla);
 void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla);
-void ActualizaPantalla(tipo_arkanoPi* p_arkanoPi);
+void ActivaPausa(fsm_t* this);
+//void MantienePausa(fsm_t* this);
+void DesactivaPausa(fsm_t* this);
+
 
 //------------------------------------------------------
 // FUNCIONES DE TRANSICION DE LA MAQUINA DE ESTADOS
@@ -98,6 +108,9 @@ int CompruebaMovimientoIzquierda (fsm_t* this);
 int CompruebaMovimientoDerecha (fsm_t* this);
 int CompruebaTimeoutActualizacionJuego (fsm_t* this);
 int CompruebaFinalJuego (fsm_t* this);
+int CompruebaFinalJuego(fsm_t* this);
+int CompruebaFinalNivel(fsm_t* this);
+int CompruebaCambioNivel(fsm_t* this);
 
 //------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
@@ -108,6 +121,11 @@ void MuevePalaDerecha (fsm_t* this);
 void ActualizarJuego (fsm_t* this);
 void FinalJuego (fsm_t* this);
 void ReseteaJuego (fsm_t* this);
+void CambioNivel (fsm_t* this);
+void ActualizaNumeroNivel (fsm_t* this);
+void PantallaEspera (fsm_t* this);
+void ActivaPausa (fsm_t* this);
+void DesactivaPausa (fsm_t* this);
 
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES

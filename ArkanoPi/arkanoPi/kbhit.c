@@ -8,7 +8,8 @@
 
 
 
-#include "dprintf.h" // para poder usar DPRINTF
+
+#include "../arkanoPi/dprintf.h" // para poder usar DPRINTF
 
 static char ch2=0;
   

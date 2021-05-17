@@ -1,29 +1,6 @@
 
 #include "ledDisplay.h"
 
-tipo_pantalla pantalla_inicial = {
-	.matriz = {
-	{0,0,0,0,0,0,0,0},
-	{0,1,1,0,0,1,1,0},
-	{0,1,1,0,0,1,1,0},
-	{0,0,0,0,0,0,0,0},
-	{0,1,0,0,0,0,1,0},
-	{0,0,1,1,1,1,0,0},
-	{0,0,0,0,0,0,0,0},
-	}
-};
-
-tipo_pantalla pantalla_final = {
-	.matriz = {
-	{0,0,0,0,0,0,0,0},
-	{0,1,1,0,0,1,1,0},
-	{0,1,1,0,0,1,1,0},
-	{0,0,0,0,0,0,0,0},
-	{0,0,1,1,1,1,0,0},
-	{0,1,0,0,0,0,1,0},
-	{0,0,0,0,0,0,0,0},
-	}
-};
 
 // Maquina de estados: lista de transiciones
 // {EstadoOrigen, CondicionDeDisparo, EstadoFinal, AccionesSiTransicion }
@@ -48,6 +25,11 @@ void InicializaLedDisplay (TipoLedDisplay *led_display) {
 		for(int j=0; j<3; j++){
 		pinMode(led_display->pines_control_columnas[j],OUTPUT);
 		}
+		for(int i = 0; i < NUM_FILAS_DISPLAY; i++){
+					for(int j = 0; j < NUM_COLUMNAS_DISPLAY; j++){
+					led_display->pantalla.matriz[i][j] = pantalla_inicial.matriz[i][j];
+					}
+				}
 
 }
 

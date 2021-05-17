@@ -3,6 +3,7 @@
 
 
 
+
 char tecladoTL04[4][4] = {
 	{'1', '2', '3', 'A'},
 	{'4', '5', '6', 'B'},
@@ -165,7 +166,7 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 			}
-		else if(p_teclado->teclaPulsada.row==FILA_2){
+		else if(p_teclado->teclaPulsada.row==FILA_2 ){
 			//printf("\nKeypress 4!!!\n");
 			//fflush(stdout);
 
@@ -183,30 +184,34 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			p_teclado->teclaPulsada.col = -1;
 		}
 		else if(p_teclado->teclaPulsada.row==FILA_4){
-			//printf("\nKeypress A!!!\n");
-			fflush(stdout);
+			//printf("\nKeypress *!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
 	break;
 	case COLUMNA_2:
 		if(p_teclado->teclaPulsada.row==FILA_1){
-
+			//printf("\nKeypress 2!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
 		else if(p_teclado->teclaPulsada.row==FILA_2){
-
+			//printf("\nKeypress 5!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
 		else if(p_teclado->teclaPulsada.row==FILA_3){
-
+			//printf("\nKeypress 8!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
 		else if(p_teclado->teclaPulsada.row==FILA_4){
-
+			//printf("\nKeypress 0!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 				}
@@ -214,11 +219,14 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 
 	case COLUMNA_3:
 		if(p_teclado->teclaPulsada.row==FILA_1){
-
+			//printf("\nKeypress 3!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 						}
-		else if(p_teclado->teclaPulsada.row==FILA_2){
+		else if(p_teclado->teclaPulsada.row==FILA_2 ){
+			//printf("\nKeypress 6!!!\n");
+			//fflush(stdout);
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_MOV_DERECHA;
 			piUnlock (SYSTEM_FLAGS_KEY);
@@ -226,18 +234,28 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			p_teclado->teclaPulsada.col = -1;
 						}
 		else if(p_teclado->teclaPulsada.row==FILA_3){
+			//printf("\nKeypress 9!!!\n");
+			//fflush(stdout);
+
+			piLock (SYSTEM_FLAGS_KEY);
+			flags |= FLAG_PAUSA;
+			piUnlock (SYSTEM_FLAGS_KEY);
 
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 						}
 		else if(p_teclado->teclaPulsada.row==FILA_4){
-
+			//printf("\nKeypress #!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 						}
 		break;
 	case COLUMNA_4:
-		if(p_teclado->teclaPulsada.row==FILA_1){
+		if(p_teclado->teclaPulsada.row==FILA_1 ){
+			//printf("\nKeypress A!!!\n");
+			//fflush(stdout);
+			digitalWrite(9,LOW);
 			piLock (SYSTEM_FLAGS_KEY);
 			flags |= FLAG_BOTON ;
 			piUnlock (SYSTEM_FLAGS_KEY);
@@ -245,16 +263,26 @@ void ProcesaTeclaPulsada (fsm_t* this) {
 			p_teclado->teclaPulsada.col = -1;
 								}
 		else if(p_teclado->teclaPulsada.row==FILA_2){
-
+			//printf("\nKeypress B!!!\n");
+			//fflush(stdout);
+			piLock (SYSTEM_FLAGS_KEY);
+			flags |= FLAG_FIN_NIVEL ;
+			piUnlock (SYSTEM_FLAGS_KEY);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 								}
 		else if(p_teclado->teclaPulsada.row==FILA_3){
-
+			//printf("\nKeypress C!!!\n");
+			//fflush(stdout);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;
 								}
 		else if(p_teclado->teclaPulsada.row==FILA_4){
+			//printf("\nKeypress D!!!\n");
+			//fflush(stdout);
+
+			system("killall omxplayer.bin");
+
 			exit(0);
 			p_teclado->teclaPulsada.row= -1;
 			p_teclado->teclaPulsada.col = -1;

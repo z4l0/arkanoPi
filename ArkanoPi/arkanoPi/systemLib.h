@@ -11,13 +11,17 @@
 #include <sys/time.h>
 #include <wiringPi.h>
 
+
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "fsm.h"
+#include "fsm.h"
+#include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 #include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 #include "tmr.h"
-#include "fsm.h"
-#include "kbhit.h" // para poder detectar teclas pulsadas sin bloqueo y leer las teclas pulsadas
 
-#define __SIN_PSEUDOWIRINGPI__
+#define SIN_PSEUDOWIRINGPI
 #define CLK_MS 					1
 
 // ATENCION: Valores a modificar por el alumno
@@ -51,7 +55,7 @@
 #define GPIO_LED_DISPLAY_COL_1	11
 #define GPIO_LED_DISPLAY_COL_2	14
 #define GPIO_LED_DISPLAY_COL_3	17
-#define GPIO_LED_DISPLAY_COL_4	0
+//#define GPIO_LED_DISPLAY_COL_4	0
 
 #define GPIO_LED_DISPLAY_ROW_1	4
 #define GPIO_LED_DISPLAY_ROW_2	7
@@ -63,18 +67,26 @@
 
 // FLAGS FSM CONTROL DE SERPIENTE Y GESTION JUEGO
 // ATENCION: Valores a modificar por el alumno
-#define FLAG_MOV_ARRIBA 	0x01
-#define FLAG_MOV_ABAJO		0x02
-#define FLAG_MOV_DERECHA 	0x04
+#define FLAG_MOV_ARRIBA 		0x01
+#define FLAG_MOV_ABAJO			0x02
+#define FLAG_MOV_DERECHA 		0x04
 #define FLAG_MOV_IZQUIERDA 	0x08
-#define FLAG_TIMER_JUEGO	0x10
-#define FLAG_BOTON 			0x20
-#define FLAG_FIN_JUEGO		0x40
+#define FLAG_TIMER_JUEGO		0x10
+#define FLAG_BOTON 					0x20
+#define FLAG_FIN_JUEGO			0x40
+#define FLAG_CAMBIO_NIVEL		0x80
+#define FLAG_FIN_NIVEL			0x100
+#define FLAG_PAUSA					0x200
+
 
 enum fsm_state {
 	WAIT_START,
 	WAIT_PUSH,
-	WAIT_END};
+	WAIT_END,
+	WAIT_CHANGE,
+	WAIT_NUMBER,
+	WAIT_RESET,
+	WAIT_PAUSE};
 
 extern int flags;
 

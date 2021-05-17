@@ -1,6 +1,133 @@
 #include "arkanoPiLib.h"
 
+int level=1;
+int pausa =0;
+int flecha=0;
+//variable para aumentar la velociad de desplazamiento de la pelota (ha dejado de ser una cte.)
 
+
+//Pantallas básicas de transciones
+tipo_pantalla pantalla_inicial = {
+	.matriz = {
+	{0,0,0,0,0,0,0,0},
+	{0,1,1,0,0,1,1,0},
+	{0,1,1,0,0,1,1,0},
+	{0,0,0,0,0,0,0,0},
+	{0,1,1,1,1,1,1,0},
+	{0,0,1,1,1,1,0,0},
+	{0,0,0,0,0,0,0,0},
+	}
+};
+
+tipo_pantalla pantalla_final = {
+	.matriz = {
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0},
+	{0,1,1,0,0,1,1,0},
+	{0,0,0,0,0,0,0,0},
+	{0,0,0,1,1,0,0,0},
+	{0,0,1,0,0,1,0,0},
+	{0,0,0,0,0,0,0,0},
+	}
+};
+
+tipo_pantalla pantalla_flecha1 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+	}
+};
+tipo_pantalla pantalla_flecha2 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+	}
+};
+
+tipo_pantalla pantalla_flecha3 = {
+	.matriz = {
+
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,1,0,1,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv1 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv2 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,1,0,0,1,0,0},
+		{0,0,0,0,1,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,1,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_lv3 = {
+	.matriz = {
+
+		{0,0,0,0,0,0,0,0},
+		{0,0,1,1,1,1,1,0},
+		{0,0,0,0,0,1,0,0},
+		{0,0,0,0,1,1,0,0},
+		{0,0,1,0,0,0,1,0},
+		{0,0,0,1,1,1,0,0},
+		{0,0,0,0,0,0,0,0},
+
+	}
+};
+
+tipo_pantalla pantalla_pregunta = {
+	.matriz = {
+
+
+		{0,0,1,1,1,0,0,0},
+		{0,1,0,0,0,1,0,0},
+		{0,1,0,0,0,1,0,0},
+		{0,0,0,1,1,0,0,0},
+		{0,0,0,1,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,1,0,0,0,0},
+
+	}
+};
+
+//Matrices correspondientes a cada nivel
 int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{1,1,1,1,1,1,1,1},
 	{1,1,1,1,1,1,1,1},
@@ -9,6 +136,26 @@ int ladrillos_basico[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0},
+};
+
+int ladrillos_level2[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
+		{2,0,2,0,2,0,2,0},
+		{0,2,0,2,0,2,0,2},
+		{2,0,2,0,2,0,2,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+};
+
+int ladrillos_level3[NUM_FILAS_DISPLAY][NUM_COLUMNAS_DISPLAY] = {
+		{3,3,3,3,3,3,3,3},
+		{0,3,0,3,3,0,3,0},
+		{0,0,3,3,3,3,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
+		{0,0,0,0,0,0,0,0},
 };
 
 //------------------------------------------------------
@@ -27,8 +174,129 @@ void PintaMensajeInicialPantalla (tipo_pantalla *p_pantalla, tipo_pantalla *p_pa
 	return;
 }
 
+void PintaMensajeFinalPantalla (tipo_pantalla *p_pantalla) {
+	int i, j = 0;
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_pantalla->matriz[i][j] = pantalla_final.matriz[i][j];
+		}
+	}
+
+	return;
+}
+
+void PintaPregunta (tipo_pantalla *p_pantalla) {
+	int i, j = 0;
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+			p_pantalla->matriz[i][j] = pantalla_pregunta.matriz[i][j];
+		}
+	}
+
+	return;
+}
+
+void PintaFlechaPantalla (tipo_pantalla *p_pantalla) {
+
+	tipo_pantalla *p_pantalla_flecha;
+
+	switch (flecha)
+	{
+			case 1:
+				p_pantalla_flecha = &pantalla_flecha1;
+
+				break;
+			case 2:
+				p_pantalla_flecha = &pantalla_flecha2;
+
+
+				break;
+			case 3:
+				p_pantalla_flecha = &pantalla_flecha3;
+
+
+				break;
+			case 4:
+				p_pantalla_flecha = &pantalla_flecha1;
+
+
+				break;
+			case 5:
+				p_pantalla_flecha = &pantalla_flecha2;
+
+
+				break;
+			case 6:
+				p_pantalla_flecha = &pantalla_flecha3;
+
+
+				break;
+
+			case 7:
+				flecha = 0; //reinicio para la próxima
+
+				piLock(SYSTEM_FLAGS_KEY);
+				flags |= FLAG_CAMBIO_NIVEL;
+				piUnlock(SYSTEM_FLAGS_KEY);
+
+				break;
+
+
+
+			default:
+				break;
+
+	}
+
+	for(int i=0;i<NUM_FILAS_DISPLAY;i++){
+		for(int j=0;j<NUM_COLUMNAS_DISPLAY;j++){
+
+			p_pantalla->matriz[i][j] = p_pantalla_flecha->matriz[i][j];
+		}
+	}
+
+
+	return;
+}
+
+void PintaNivelPantalla (tipo_pantalla *p_pantalla) {
+	int i, j = 0;
+	tipo_pantalla *p_pantalla_nivel;
+
+	switch (level)
+	{
+		case 1:
+		p_pantalla_nivel = &pantalla_lv1;
+		break;
+
+		case 2:
+		p_pantalla_nivel = &pantalla_lv2;
+		break;
+
+		case 3:
+		p_pantalla_nivel = &pantalla_lv3;
+		break;
+
+		default:
+			break;
+
+	}
+
+	for(i=0;i<NUM_FILAS_DISPLAY;i++)
+	{
+		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++)
+		{
+			p_pantalla->matriz[i][j] = p_pantalla_nivel->matriz[i][j];
+		}
+	}
+
+	return;
+}
+/*
 void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
-#ifdef __SIN_PSEUDOWIRINGPI__
+#ifdef SIN_PSEUDOWIRINGPI
 	int i=0, j=0;
 
 	printf("\n[PANTALLA]\n");
@@ -44,6 +312,7 @@ void PintaPantallaPorTerminal (tipo_pantalla *p_pantalla) {
 	fflush(stdout);
 #endif
 }
+*/
 
 void ReseteaPantalla (tipo_pantalla *p_pantalla) {
 	int i=0, j=0;
@@ -63,10 +332,22 @@ void ReseteaPantalla (tipo_pantalla *p_pantalla) {
 void InicializaLadrillos(tipo_pantalla *p_ladrillos) {
 	int i=0, j=0;
 
-	for(i=0;i<NUM_FILAS_DISPLAY;i++) {
-		for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
-			p_ladrillos->matriz[i][j] = ladrillos_basico[i][j];
-		}
+		switch(level){
+		case 1:
+		for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+			for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+				p_ladrillos->matriz[i][j] = ladrillos_basico[i][j];}}
+		break;
+		case 2:
+			for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+					for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+						p_ladrillos->matriz[i][j] = ladrillos_level2[i][j];}}
+			break;
+		case 3:
+				for(i=0;i<NUM_FILAS_DISPLAY;i++) {
+						for(j=0;j<NUM_COLUMNAS_DISPLAY;j++) {
+							p_ladrillos->matriz[i][j] = ladrillos_level3[i][j];}}
+				break;
 	}
 }
 
@@ -148,6 +429,7 @@ void PintaPala(tipo_pala *p_pala, tipo_pantalla *p_pantalla) {
 }
 
 void PintaPelota(tipo_pelota *p_pelota, tipo_pantalla *p_pantalla) {
+	//mientras se encuentre dentro de los limites de la pantalla
 	if( (p_pelota->x >= 0) && (p_pelota->x < NUM_COLUMNAS_DISPLAY) ) {
 		if( (p_pelota->y >= 0) && (p_pelota->y < NUM_FILAS_DISPLAY) ) {
 			p_pantalla->matriz[p_pelota->y][p_pelota->x] = 1;
@@ -331,6 +613,16 @@ int CompruebaBotonPulsado (fsm_t* this) {
 
 }
 
+int CompruebaPausa (fsm_t* this) {
+
+	int result = 0;
+	piLock (SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_PAUSA);
+	piUnlock (SYSTEM_FLAGS_KEY);
+	return result;
+
+}
+
 int CompruebaMovimientoIzquierda(fsm_t* this) {
 
 	int result = 0;
@@ -368,6 +660,27 @@ int CompruebaFinalJuego(fsm_t* this) {
 
 }
 
+int CompruebaFinalNivel(fsm_t* this) {
+
+	int result = 0;
+	piLock (SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_FIN_NIVEL);
+	piUnlock (SYSTEM_FLAGS_KEY);
+	return result;
+
+}
+
+int CompruebaCambioNivel(fsm_t* this) {
+
+	int result = 0;
+	piLock (SYSTEM_FLAGS_KEY);
+	result = (flags & FLAG_CAMBIO_NIVEL);
+	piUnlock (SYSTEM_FLAGS_KEY);
+	return result;
+
+}
+
+
 //------------------------------------------------------
 // FUNCIONES DE ACCION DE LA MAQUINA DE ESTADOS
 //------------------------------------------------------
@@ -388,10 +701,61 @@ void InicializaJuego(fsm_t* this) {
 	piLock (MATRIX_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 	piUnlock (MATRIX_KEY);
-
+/*
 	piLock(STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY);
+*/
+
+	int pid;
+	switch(level){
+	case 1:
+
+		//Thread que actua en segundo plano para reproducir música mientras jugamos ArkanoPi
+				system("killall omxplayer.bin");
+
+				pid=fork(); //crea un clon identico (hijo) del proceso que se está ejecutando (padre) y guarda su identificador
+
+				if(pid==0) //solo el proceso hijo devolvera el valor 0, y se dedicara a reproducir la musica
+
+				{
+					//reproducimos el archivo de audio mediante OMXplayer (nativo de la raspy) a través del HDMI
+					execlp("/usr/bin/omxplayer", "omxplayer", "--loop", "--vol", "-2500", "/home/pi/Downloads/lvl1.mp3", NULL);
+
+					_exit(0); //Sale del proceso hijo sin detener la ejecucion del juego (proceso padre)
+				}
+				break;
+	case 2:
+
+
+
+				system("killall omxplayer.bin");
+
+				pid=fork();
+				if(pid==0)
+				{
+				execlp("/usr/bin/omxplayer", "omxplayer", "--loop", "--vol", "-1500", "/home/pi/Downloads/lvl2.mp3", NULL);
+				_exit(0);
+				}
+				break;
+
+	case 3:
+
+
+				system("killall omxplayer.bin");
+
+				pid=fork();
+				if(pid==0)
+				{
+				execlp("/usr/bin/omxplayer", "omxplayer", "--loop", "--vol", "-2500", "/home/pi/Downloads/lvl3.mp3", NULL);
+				_exit(0);
+				}
+				break;
+
+	default:
+				break;
+
+	}
 
 
 	tmr_startms(p_arkanoPi->tmr_actualizacion_juego,TIMEOUT_ACTUALIZA_JUEGO);
@@ -431,12 +795,12 @@ void MuevePalaIzquierda (fsm_t* this) {
 	ActualizaPantalla(p_arkanoPi);
 	piUnlock(MATRIX_KEY);
 
-
+/*
 	piLock(STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY);
 
-
+*/
 
 
 }
@@ -459,10 +823,11 @@ void MuevePalaDerecha (fsm_t* this) {
 	ActualizaPantalla(p_arkanoPi);
 	piUnlock(MATRIX_KEY);
 
-
+/*
 	piLock(STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY);
+*/
 
 }
 
@@ -481,35 +846,50 @@ void ActualizarJuego (fsm_t* this) {
 	tipo_arkanoPi* p_arkanoPi;
 	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
+	int timeout = TIMEOUT_ACTUALIZA_JUEGO;
+
 	piLock(SYSTEM_FLAGS_KEY);
 	flags &=(~FLAG_TIMER_JUEGO);
 	piUnlock(SYSTEM_FLAGS_KEY);
 
-	if(CompruebaReboteParedesVerticales(*p_arkanoPi)){
-		p_arkanoPi->pelota.trayectoria.xv= -(p_arkanoPi->pelota.trayectoria.xv);
+	/*el TIMEOUT_ACTUALIZA JUEGO se inicia a 1200 ms, y a medida que se van eliminando ladrillos se llega a un
+				valor mínimo de 450 ms.*/
+	if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla) < 12){
+				timeout = TIMEOUT_ACTUALIZA_JUEGO - 200;
 	}
-	if(CompruebaReboteTecho(*p_arkanoPi)){
-		p_arkanoPi->pelota.trayectoria.yv = -(p_arkanoPi->pelota.trayectoria.yv);
-	}
-	if(CompruebaFallo(*p_arkanoPi)){
-		piLock(SYSTEM_FLAGS_KEY);
-		flags |= FLAG_FIN_JUEGO;
-		piUnlock(SYSTEM_FLAGS_KEY);
-		return;
-	}
-	else if(CompruebaRebotePala(*p_arkanoPi)){
-		switch(p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x){
-		case 0:
-			CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA_IZQUIERDA);
-			break;
-		case 1:
-			CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA);
-			break;
-		case 2:
-			CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA_DERECHA);
-			break;
+		else if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla) < 7){
+				timeout = TIMEOUT_ACTUALIZA_JUEGO - 250;
 		}
-			}
+				else if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla) < 4){
+				timeout = TIMEOUT_ACTUALIZA_JUEGO - 350;
+				}
+
+	if(CompruebaRebotePala(*p_arkanoPi)){
+		switch(p_arkanoPi->pelota.x + p_arkanoPi->pelota.trayectoria.xv - p_arkanoPi->pala.x){
+				case 0:
+					CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA_IZQUIERDA);
+					break;
+				case 1:
+					CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA);
+					break;
+				case 2:
+					CambiarDireccionPelota((&p_arkanoPi->pelota),ARRIBA_DERECHA);
+					break;
+		}
+	}
+
+	if(CompruebaReboteParedesVerticales(*p_arkanoPi)){
+			p_arkanoPi->pelota.trayectoria.xv= -(p_arkanoPi->pelota.trayectoria.xv);
+		}
+		if(CompruebaReboteTecho(*p_arkanoPi)){
+			p_arkanoPi->pelota.trayectoria.yv = -(p_arkanoPi->pelota.trayectoria.yv);
+		}
+		if(CompruebaFallo(*p_arkanoPi)){
+			piLock(SYSTEM_FLAGS_KEY);
+			flags |= FLAG_FIN_JUEGO;
+			piUnlock(SYSTEM_FLAGS_KEY);
+			return;
+		}
 
 	if (CompruebaReboteLadrillo(p_arkanoPi)) {
 
@@ -517,10 +897,22 @@ void ActualizarJuego (fsm_t* this) {
 		p_arkanoPi->pelota.trayectoria.yv = -(p_arkanoPi->pelota.trayectoria.yv);
 
 		if(CalculaLadrillosRestantes(p_arkanoPi->p_pantalla)<= 0) {
-			piLock (SYSTEM_FLAGS_KEY);
-			flags |= FLAG_FIN_JUEGO;
-			piUnlock (SYSTEM_FLAGS_KEY);
-			return;
+			if(level<3){
+
+				piLock (SYSTEM_FLAGS_KEY);
+				flags |= FLAG_FIN_NIVEL;
+				piUnlock (SYSTEM_FLAGS_KEY);
+				return;
+
+				}
+				else{
+
+				piLock (SYSTEM_FLAGS_KEY);
+				flags |= FLAG_FIN_JUEGO;
+				piUnlock (SYSTEM_FLAGS_KEY);
+				return;
+
+									}
 		}else if(CompruebaReboteTecho (*p_arkanoPi)){
 			p_arkanoPi->pelota.trayectoria.xv = -(p_arkanoPi->pelota.trayectoria.xv);
 			p_arkanoPi->pelota.trayectoria.yv = -(p_arkanoPi->pelota.trayectoria.yv);
@@ -533,13 +925,13 @@ void ActualizarJuego (fsm_t* this) {
 	ActualizaPantalla(p_arkanoPi);
 	piUnlock(MATRIX_KEY);
 
-
+/*
 	piLock(STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock(STD_IO_BUFFER_KEY);
+*/
 
-
-	tmr_startms(p_arkanoPi->tmr_actualizacion_juego,TIMEOUT_ACTUALIZA_JUEGO);
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego,timeout);
 
 }
 
@@ -547,14 +939,28 @@ void ActualizarJuego (fsm_t* this) {
 // terminal los mensajes necesarios para informar acerca del resultado del juego.
 
 void FinalJuego (fsm_t* this) {
-	//tipo_arkanoPi *p_arkanoPi;
-	//p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	tipo_arkanoPi *p_arkanoPi;
+		p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
 
-	//int ladrillos=CalculaLadrillosRestantes(&(p_arkanoPi->ladrillos));
 
-	//printf("Se acabó el juego!\n");
-	//printf("Quedan %d.\n", ladrillos);
-	return;
+		piLock(SYSTEM_FLAGS_KEY);
+		flags &=(~FLAG_TIMER_JUEGO);
+		piUnlock(SYSTEM_FLAGS_KEY);
+
+		piLock(MATRIX_KEY);
+		PintaMensajeFinalPantalla(p_arkanoPi->p_pantalla);
+		piUnlock(MATRIX_KEY);
+
+/*
+		piLock(STD_IO_BUFFER_KEY);
+		PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+		piUnlock(STD_IO_BUFFER_KEY);
+*/
+
+		system("killall omxplayer.bin");
+
+
+		tmr_startms(p_arkanoPi->tmr_actualizacion_juego,TIMEOUT_ACTUALIZA_JUEGO*4);
 
 }
 
@@ -573,13 +979,141 @@ void ReseteaJuego (fsm_t* this) {
 	piLock (MATRIX_KEY);
 	InicializaArkanoPi(p_arkanoPi);
 	piUnlock (MATRIX_KEY);
-
+/*
 	piLock (STD_IO_BUFFER_KEY);
 	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
 	piUnlock (STD_IO_BUFFER_KEY);
+*/
 
 }
 
+void PantallaEspera (fsm_t* this) {
+	tipo_arkanoPi *p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock(MATRIX_KEY);
+	PintaPregunta(p_arkanoPi->p_pantalla);
+	piUnlock(MATRIX_KEY);
+
+/*
+	piLock(STD_IO_BUFFER_KEY);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+	piUnlock(STD_IO_BUFFER_KEY);
+*/
+
+}
+
+
+void CambioNivel (fsm_t* this) {
+
+	tipo_arkanoPi* p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	if(flecha == 0){
+		system("killall omxplayer.bin");
+		int pid;
+				pid=fork();
+					if(pid==0)
+						{
+						execlp("/usr/bin/omxplayer", "omxplayer", "--loop", "--vol", "-1500", "/home/pi/Downloads/level_up.wav", NULL);
+						_exit(0);
+						}
+	}
+
+
+
+	//quitamos la flag para usarla en el siguente nivel
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_FIN_NIVEL);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	flecha++;
+
+	piLock(MATRIX_KEY);
+	PintaFlechaPantalla(p_arkanoPi->p_pantalla);
+	piUnlock(MATRIX_KEY);
+
+/*
+	piLock(STD_IO_BUFFER_KEY);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+	piUnlock(STD_IO_BUFFER_KEY);
+*/
+
+
+
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego,TIMEOUT_ACTUALIZA_JUEGO/2);
+
+}
+
+void ActualizaNumeroNivel (fsm_t* this) {
+
+	tipo_arkanoPi* p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+
+	system("killall omxplayer.bin");
+
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_TIMER_JUEGO);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	// desactiva el flag
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_CAMBIO_NIVEL);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	level++;
+
+	piLock(MATRIX_KEY);
+	PintaNivelPantalla(p_arkanoPi->p_pantalla);
+	piUnlock(MATRIX_KEY);
+
+/*
+	piLock(STD_IO_BUFFER_KEY);
+	PintaPantallaPorTerminal(p_arkanoPi->p_pantalla);
+	piUnlock(STD_IO_BUFFER_KEY);
+*/
+
+	tmr_startms(p_arkanoPi->tmr_actualizacion_juego,TIMEOUT_ACTUALIZA_JUEGO);
+
+}
+
+void ActivaPausa(fsm_t* this){
+	tipo_arkanoPi* p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	pausa = 1;
+	// pausar omxplayer
+	system("dbuscontrol.sh pause");
+	// desactiva el flag
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_PAUSA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+}
+
+void DesactivaPausa(fsm_t* this){
+
+	tipo_arkanoPi* p_arkanoPi;
+	p_arkanoPi = (tipo_arkanoPi*)(this->user_data);
+	pausa = 0;
+	//resumir omxplayer
+	system("dbuscontrol.sh pause");
+	// desactiva el flag
+	piLock(SYSTEM_FLAGS_KEY);
+	flags &=(~FLAG_PAUSA);
+	piUnlock(SYSTEM_FLAGS_KEY);
+
+	ActualizarJuego(this);
+
+}
 //------------------------------------------------------
 // SUBRUTINAS DE ATENCION A LAS INTERRUPCIONES
 //------------------------------------------------------
@@ -589,5 +1123,3 @@ void tmr_actualizacion_juego_isr(union sigval value) {
 	flags |= FLAG_TIMER_JUEGO ;
 	piUnlock (SYSTEM_FLAGS_KEY);
 }
-
-

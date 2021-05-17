@@ -2,6 +2,7 @@
 #include "arkanoPi.h"
 
 int flags = 0;
+int comienzo_musica=0;
 
 TipoSistema sistema;
 
@@ -70,6 +71,7 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 	sistema.arkanoPi.p_pantalla = &(led_display.pantalla);
 
 
+	int result = 0;
 
 	piLock (STD_IO_BUFFER_KEY);
 
@@ -79,78 +81,92 @@ int ConfiguraInicializaSistema (TipoSistema *p_sistema) {
 		return -1;
     }
 
-	// Lanzamos thread para exploracion del teclado convencional del PC
-	//result = piThreadCreate (thread_explora_teclado_PC);
-/*
-	if (result != 0) {
-		printf ("Thread didn't start!!!\n");
-		return -1;
-	}
-	*/
+	result = piThreadCreate (thread_explora_teclado_PC);
 
+		if (result != 0) {
+			printf ("Thread didn't start!!!\n");
+			return -1;
+		}
 	piUnlock (STD_IO_BUFFER_KEY);
 
+	 /*pid_t pid = getpid();
+	 printf("pid of program is %d" , pid);
+	  	 */
 
-
-	return 1;
-}
+		return 1;}
 
 //------------------------------------------------------
 // FUNCIONES LIGADAS A THREADS ADICIONALES
 //------------------------------------------------------
 
-/*
 PI_THREAD (thread_explora_teclado_PC) {
 	int teclaPulsada;
+
+
 
 	while(1) {
 		delay(10); // Wiring Pi function: pauses program execution for at least 10 ms
 
 		piLock (STD_IO_BUFFER_KEY);
 
-		if(kbhit()) {
+			if(kbhit()){
 			teclaPulsada = kbread();
-
 			switch(teclaPulsada) {
 
-				case 's':
+				case 'z':
 
 					piLock (SYSTEM_FLAGS_KEY);
-					flags |= FLAG_BOTON ;
+					flags |= FLAG_BOTON;
 					piUnlock (SYSTEM_FLAGS_KEY);
 
 
 					break;
-					
+
 				case 'a':
-					
+
 					piLock (SYSTEM_FLAGS_KEY);
 					flags |= FLAG_MOV_IZQUIERDA;
 					piUnlock (SYSTEM_FLAGS_KEY);
 					break;
 
-				case 'd':
+				case 'l':
 
 					piLock (SYSTEM_FLAGS_KEY);
 					flags |= FLAG_MOV_DERECHA;
 					piUnlock (SYSTEM_FLAGS_KEY);
 					break;
 
+				case 'x':
+
+					piLock (SYSTEM_FLAGS_KEY);
+					flags |= FLAG_FIN_NIVEL;
+					piUnlock (SYSTEM_FLAGS_KEY);
+					break;
+
+				case 'p':
+
+					piLock (SYSTEM_FLAGS_KEY);
+					flags |= FLAG_PAUSA;
+					piUnlock (SYSTEM_FLAGS_KEY);
+					break;
+
 				case 'q':
+
+					system("killall omxplayer.bin");
 					exit(0);
 					break;
 
 
 				default:
-					printf("INVALID KEY!!!\n");
+
 					break;
 			}
 		}
 
 		piUnlock (STD_IO_BUFFER_KEY);
 	}
+
 }
-*/
 
 // wait until next_activation (absolute time)
 void delay_until (unsigned int next) {
@@ -171,8 +187,22 @@ int main () {
 		{ WAIT_PUSH, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, ActualizarJuego },
 		{ WAIT_PUSH, CompruebaMovimientoIzquierda, WAIT_PUSH, MuevePalaIzquierda },
 		{ WAIT_PUSH, CompruebaMovimientoDerecha, WAIT_PUSH, MuevePalaDerecha },
+		//estado de pausa
+		{ WAIT_PUSH, CompruebaPausa, WAIT_PAUSE, ActivaPausa },
+		{ WAIT_PAUSE, CompruebaPausa, WAIT_PUSH, DesactivaPausa },
+
+		//Perdemos una vida
+
+		//Estados para la transicion entre niveles
+		{ WAIT_PUSH, CompruebaFinalNivel, WAIT_CHANGE, CambioNivel },
+		{ WAIT_CHANGE, CompruebaTimeoutActualizacionJuego, WAIT_CHANGE, CambioNivel },
+		{ WAIT_CHANGE, CompruebaCambioNivel, WAIT_NUMBER, ActualizaNumeroNivel },
+		{ WAIT_NUMBER, CompruebaTimeoutActualizacionJuego, WAIT_PUSH, InicializaJuego },
+		//Fin cambio nivel
+
 		{ WAIT_PUSH, CompruebaFinalJuego, WAIT_END, FinalJuego },
-		{ WAIT_END,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
+		{ WAIT_END, CompruebaTimeoutActualizacionJuego, WAIT_RESET, PantallaEspera },
+		{ WAIT_RESET,  CompruebaBotonPulsado, WAIT_START, ReseteaJuego },
 		{-1, NULL, -1, NULL },
 	};
 
@@ -186,8 +216,8 @@ int main () {
 	{-1, NULL, -1, NULL }};
 
 	fsm_trans_t tabla_display[] = {
-			{ DISPLAY_ESPERA_COLUMNA, CompruebaTimeoutColumnaDisplay, DISPLAY_ESPERA_COLUMNA, ActualizaExcitacionDisplay },
-			{-1, NULL, -1, NULL },
+	{ DISPLAY_ESPERA_COLUMNA, CompruebaTimeoutColumnaDisplay, DISPLAY_ESPERA_COLUMNA, ActualizaExcitacionDisplay },
+	{-1, NULL, -1, NULL },
 		};
 
 

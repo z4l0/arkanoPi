@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lm -lrt -lpthread -lwiringPi -lcrypt
+LIBS := -lrt -lpthread -lm -lwiringPi -lcrypt
 
